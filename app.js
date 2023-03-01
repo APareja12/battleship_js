@@ -14,18 +14,48 @@ const optionShips = Array.from(optionContainer.children)
     optionShips.forEach(optionShip => optionShip.style.transform = `rotate(${angle}deg)`)
 }
 
+flipButton.addEventListener('click', flip)
+
 // Creating Boards 
 const width = 10
 
-function createBoard(color) {
+function createBoard(color, user) {
     const gameBoardContainer = document.createElement('div')
     gameBoardContainer.classList.add('game-board')
     gameBoardContainer.style.backgroundColor = color
+    gameBoardContainer.id = user
+
+    for (let i = 0; i < width * width; i++) {
+        const block = document.createElement('div')
+        block.classList.add('block')
+        block.id = i
+        gameBoardContainer.append(block)
+    }
 
     gamesBoardContainer.append(gameBoardContainer)
 }
 
-createBoard('yellow')
-createBoard('pink')
+createBoard('yellow', 'player')
+createBoard('pink', 'computer')
 
-flipButton.addEventListener('click', flip)
+// Creating Ships
+class Ship {
+    constructor(name, length) {
+        this.name = name
+        this.length = length
+    }
+}
+
+const destroyer = new Ship('destroyer', 2)
+const submarine = new Ship('submarine', 3)
+const cruiser = new Ship('cruiser', 3)
+const battleship = new Ship('battleship', 4)
+const carrier = new Ship('carrier', 5)
+
+const ships = [destroyer,submarine, cruiser, battleship, carrier]
+
+function addShipPiece() {
+    const allBoardBlocks = document.querySelectorAll('#computer div')
+    let randomStartIndex = Math.floor(Math.random() * width * width)
+}
+addShipPiece()
