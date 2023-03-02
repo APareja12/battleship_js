@@ -53,20 +53,15 @@ const battleship = new Ship('battleship', 4)
 const carrier = new Ship('carrier', 5)
 
 const ships = [destroyer,submarine, cruiser, battleship, carrier]
-
 let notDropped
 
-function addShipPiece(user, ship, startId) {
-    const allBoardBlocks = document.querySelectorAll(`#${user} div`)
-    let randomBoolean = Math.random() < 0.5
-    let isHorizontal = user === 'player' ? angle === 0 : randomBoolean
-    let randomStartIndex = Math.floor(Math.random() * width * width)
 
-    let startIndex = startId ? startId : randomStartIndex
-
-    let validStart = isHorizontal ? startIndex <= width * width - ship.length ? startIndex : width * width - ship.length :
+function handleValidity(allBoardBlocks, isHorizontal, startIndex, ship) {
+    let validStart = isHorizontal ? startIndex <= width * width - ship.length ?
+     startIndex : width * width - ship.length :
     //handle vertical
-    startIndex <= width * width - width * ship.length ? startIndex : startIndex - ship.length * width + width
+    startIndex <= width * width - width * ship.length ? 
+    startIndex : startIndex - ship.length * width + width
 
     let shipBlocks = []
 
@@ -90,6 +85,21 @@ function addShipPiece(user, ship, startId) {
     }
 
     const notTaken = shipBlocks.every(shipBlock => !shipBlock.classList.contains('taken'))
+
+    return { shipBlocks, valid, notTaken}
+}
+
+
+function addShipPiece(user, ship, startId) {
+    const allBoardBlocks = document.querySelectorAll(`#${user} div`)
+    let randomBoolean = Math.random() < 0.5
+    let isHorizontal = user === 'player' ? angle === 0 : randomBoolean
+    let randomStartIndex = Math.floor(Math.random() * width * width)
+
+    let startIndex = startId ? startId : randomStartIndex
+
+    handleValidity(allBoardBlocks, isHorizontal, startIndex, ship)
+    
 
     if (valid && notTaken) {      
         shipBlocks.forEach(shipBlock => {
