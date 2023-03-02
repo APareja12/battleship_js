@@ -56,7 +56,7 @@ const ships = [destroyer,submarine, cruiser, battleship, carrier]
 let notDropped
 
 
-function handleValidity(allBoardBlocks, isHorizontal, startIndex, ship) {
+function getValidity(allBoardBlocks, isHorizontal, startIndex, ship) {
     let validStart = isHorizontal ? startIndex <= width * width - ship.length ?
      startIndex : width * width - ship.length :
     //handle vertical
@@ -98,7 +98,7 @@ function addShipPiece(user, ship, startId) {
 
     let startIndex = startId ? startId : randomStartIndex
 
-    handleValidity(allBoardBlocks, isHorizontal, startIndex, ship)
+    const { shipBlocks, valid, notTaken } = getValidity(allBoardBlocks, isHorizontal, startIndex, ship)
     
 
     if (valid && notTaken) {      
@@ -144,4 +144,15 @@ function dropShip(e) {
 }
 
 // Add highlight
-function highlightArea( startIndex, ship)
+function highlightArea( startIndex, ship) {
+    let isHorizontal = angle === 0
+
+   const {shipBlocks, valid, notTaken} = getValidity(allBoardBlocks, isHorizontal, startIndex, ship)
+
+   if (valid && notTaken) {
+     shipBlocks.forEach(shipBlock => {
+        shipBlock.classList.add('hover')
+        setTimeout(() => shipBlock.classList.remove('hover'), 500)
+     })
+   }
+}
