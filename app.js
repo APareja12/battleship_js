@@ -1,6 +1,9 @@
 const gamesBoardContainer = document.querySelector('#gamesboard-container')
 const optionContainer = document.querySelector('.option-container')
 const flipButton = document.querySelector('#flip-button')
+const startButton = document.querySelector('#start-button')
+const infoDisplay = document.querySelector('#info')
+const turnDisplay = document.querySelector('#turn-display')
 
 let angle = 0
 function flip() {
@@ -107,7 +110,7 @@ function addShipPiece(user, ship, startId) {
             shipBlock.classList.add('taken')
         })
     } else {
-        if (user === 'computer') addShipPiece(ship)
+        if (user === 'computer') addShipPiece(user, ship, startId)
         if (user === 'player') notDropped = true
     }
 }  
@@ -132,6 +135,8 @@ function dragStart(e) {
 
 function dragOver(e) {
     e.preventDefault()
+    const ship = ships[draggedShip.id]
+    highlightArea(e.target.id, ship)
 }
 
 function dropShip(e) {
@@ -145,6 +150,7 @@ function dropShip(e) {
 
 // Add highlight
 function highlightArea( startIndex, ship) {
+    const allBoardBlocks = document.querySelectorAll('#player div')
     let isHorizontal = angle === 0
 
    const {shipBlocks, valid, notTaken} = getValidity(allBoardBlocks, isHorizontal, startIndex, ship)
@@ -156,3 +162,34 @@ function highlightArea( startIndex, ship) {
      })
    }
 }
+
+let gameOver = false
+let playerTurn 
+
+function startGame() {
+    if(optionContainer.children.length != 0) {
+        infoDisplay.textContent = 'Please place all your pieces first!'
+    } else {
+       const allBoardBlocks = document.querySelectorAll('#computer div')
+       allBoardBlocks.forEach(block => block.addEventListener('click', handleClick))
+    }
+}
+
+let playerHits = []
+let computerHits = []
+
+function handleClick(e) {
+    if (!gameOver) {
+        if (e.target.classList.contains('taken')) {
+            e.target.classList.add('boom')
+            infoDisplay.textContent = 'You hit the computers ship!'
+            let classes = Array.from(e.target.classList)
+            classes = classes.filter(className => className !== 'block')
+            classes = classes.filter(className => className !== 'boom')
+            classes = classes.filter(className => className !== 'taken')
+            playerHits.push(...classes)
+        }
+    }
+}
+
+startButton.addEventListener('click', startGame)
