@@ -175,6 +175,8 @@ function startGame() {
     }
 }
 
+startButton.addEventListener('click', startGame)
+
 let playerHits = []
 let computerHits = []
 
@@ -189,7 +191,40 @@ function handleClick(e) {
             classes = classes.filter(className => className !== 'taken')
             playerHits.push(...classes)
         }
+        if (!e.target.classList.contains('taken')) {
+            infoDisplay.textContent = 'Nothing hit this time.'
+            e.target.classList.add('empty')
+        }
+        playerTurn = false
+        const allBoardBlocks = document.querySelectorAll('#computer div')
+        allBoardBlocks.forEach(block => block.replaceWith(block.cloneNode(true)))
+        setTimeout(computerGo, 3000)
     }
 }
 
-startButton.addEventListener('click', startGame)
+//Define computers go
+function computerGo() {
+    if (!gameOver) {
+        turnDisplay.textContent = 'Computers Go!'
+        turnDisplay.textContent = 'The computer is thinking...'
+
+        setTimeout(() => {
+            let randomGo = Math.floor(Math.random() * width * width)
+            const allBoardBlocks = document.querySelectorAll('#player div')
+
+            if (allBoardBlocks[randomGo].classList.contains('taken') &&
+                allBoardBlocks[randomGo].classList.contains('boom')
+                ) {
+                    computerGo()
+                    return
+                } else if (
+                    allBoardBlocks[randomGo].classList.contains('taken') &&
+                    !allBoardBlocks[randomGo].classList.contains('boom')
+                ) {
+                    !allBoardBlocks[randomGo].classList.add('boom')
+                    infoDisplay.textContent = 'The computer hit your ship!'
+                    
+                }
+        })
+    }
+}
